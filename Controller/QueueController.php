@@ -3,7 +3,7 @@ App::uses('QueueAppController', 'Queue.Controller');
 
 class QueueController extends QueueAppController {
 
-	public $uses = ['Queue.QueuedTask'];
+	public $uses = array('Queue.QueuedTask');
 
 /**
  * QueueController::beforeFilter()
@@ -57,7 +57,7 @@ class QueueController extends QueueAppController {
 		} else {
 			$this->Session->setFlash($message, 'default', ['class' => $class]);
 		}
-		return $this->redirect(['action' => 'index']);
+		return $this->Common->autoPostRedirect(array('action' => 'index'));
 	}
 
 /**
@@ -71,11 +71,11 @@ class QueueController extends QueueAppController {
  */
 	protected function _status() {
 		if (!($pidFilePath = Configure::read('Queue.pidfilepath'))) {
-			return [];
+			return array();
 		}
 		$file = $pidFilePath . 'queue.pid';
 		if (!file_exists($file)) {
-			return [];
+			return array();
 		}
 
 		$sleepTime = Configure::read('Queue.sleeptime');
@@ -88,10 +88,10 @@ class QueueController extends QueueAppController {
 			}
 		}
 
-		$res = [
+		$res = array(
 			'time' => filemtime($file),
 			'workers' => $count,
-		];
+		);
 		return $res;
 	}
 

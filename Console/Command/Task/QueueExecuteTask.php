@@ -56,10 +56,10 @@ class QueueExecuteTask extends QueueTask {
 			$this->out(' ');
 		} else {
 
-			$data = [
+			$data = array(
 				'command' => $this->args[1],
 				'params' => array_slice($this->args, 2)
-			];
+			);
 			if ($this->QueuedTask->createJob('Execute', $data)) {
 				$this->out('Job created');
 			} else {

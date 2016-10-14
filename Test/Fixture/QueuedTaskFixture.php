@@ -7,85 +7,85 @@
  */
 class QueuedTaskFixture extends CakeTestFixture {
 
-	public $fields = [
-		'id' => [
+	public $fields = array(
+		'id' => array(
 			'type' => 'integer',
 			'null' => false,
 			'default' => null,
 			'length' => 10,
 			'key' => 'primary'
-		],
-		'jobtype' => [
+		),
+		'jobtype' => array(
 			'type' => 'string',
 			'null' => false,
 			'length' => 45
-		],
-		'data' => [
+		),
+		'data' => array(
 			'type' => 'text',
 			'null' => true,
 			'default' => null
-		],
-		'group' => [
+		),
+		'group' => array(
 			'type' => 'string',
 			'length' => 255,
 			'null' => true,
 			'default' => null
-		],
-		'reference' => [
+		),
+		'reference' => array(
 			'type' => 'string',
 			'length' => 255,
 			'null' => true,
 			'default' => null
-		],
-		'created' => [
+		),
+		'created' => array(
 			'type' => 'datetime',
 			'null' => true,
 			'default' => null
-		],
-		'notbefore' => [
+		),
+		'notbefore' => array(
 			'type' => 'datetime',
 			'null' => true,
 			'default' => null
-		],
-		'fetched' => [
+		),
+		'fetched' => array(
 			'type' => 'datetime',
 			'null' => true,
 			'default' => null
-		],
-		'completed' => [
+		),
+		'completed' => array(
 			'type' => 'datetime',
 			'null' => true,
 			'default' => null
-		],
-		'progress' => [
+		),
+		'progress' => array(
 			'type' => 'float',
 			'null' => true,
 			'default' => null
-		],
-		'failed' => [
+		),
+		'failed' => array(
 			'type' => 'integer',
 			'null' => false,
 			'default' => '0',
 			'length' => 3
-		],
-		'failure_message' => [
+		),
+		'failure_message' => array(
 			'type' => 'text',
 			'null' => true,
 			'default' => null
-		],
-		'workerkey' => [
+		),
+		'workerkey' => array(
 			'type' => 'string',
 			'null' => true,
 			'length' => 45
-		],
-		'indexes' => [
-			'PRIMARY' => [
+		),
+		'indexes' => array(
+			'PRIMARY' => array(
 				'column' => 'id',
 				'unique' => 1
-			]
-		]
-	];
+			)
+		)
+	);
 
-	public $records = [];
+	public $records = array();
 
 }

@@ -11,13 +11,13 @@ App::uses('Hash', 'Utility');
  */
 class QueuedTask extends QueueAppModel {
 
-	public $rateHistory = [];
+	public $rateHistory = array();
 
 	public $exit = false;
 
-	public $findMethods = [
+	public $findMethods = array(
 		'progress' => true
-	];
+	);
 
 	protected $_key = null;
 
@@ -72,12 +72,12 @@ class QueuedTask extends QueueAppModel {
  * @return array            Created Job array containing id, data, ...
  */
 	public function createJob($jobName, $data = null, $notBefore = null, $group = null, $reference = null) {
-		$data = [
+		$data = array(
 			'jobtype' => $jobName,
 			'data' => json_encode($data),
 			'group' => $group,
 			'reference' => $reference
-		];
+		);
 		if ($notBefore !== null) {
 			$data['notbefore'] = date('Y-m-d H:i:s', strtotime($notBefore));
 		}
@@ -103,27 +103,27 @@ class QueuedTask extends QueueAppModel {
  * @return array Taskdata.
  */
 	public function requestJob($capabilities, $group = null) {
-		$whereClause = [];
-		$wasFetched = [];
+		$whereClause = array();
+		$wasFetched = array();
 
 		$this->virtualFields['age'] = 'IFNULL(TIMESTAMPDIFF(SECOND, NOW(),notbefore), 0)';
-		$findCond = [
-			'conditions' => [
+		$findCond = array(
+			'conditions' => array(
 				'completed' => null,
-				'OR' => []
-			],
-			'fields' => [
+				'OR' => array()
+			),
+			'fields' => array(
 				'id',
 				'jobtype',
 				'fetched',
 				'age',
-			],
-			'order' => [
+			),
+			'order' => array(
 				'age ASC',
 				'id ASC'
-			],
+			),
 			'limit' => 3
-		];
+		);
 
 		if ($group !== null) {
 			$findCond['conditions']['group'] = $group;
@@ -132,24 +132,24 @@ class QueuedTask extends QueueAppModel {
 		// generate the task specific conditions.
 		foreach ($capabilities as $task) {
 			list($plugin, $name) = pluginSplit($task['name']);
-			$tmp = [
+			$tmp = array(
 				'jobtype' => $name,
-				'AND' => [
-					[
-						'OR' => [
+				'AND' => array(
+					array(
+						'OR' => array(
 							'notbefore <' => date('Y-m-d H:i:s'),
 							'notbefore' => null
-						]
-					],
-					[
-						'OR' => [
+						)
+					),
+					array(
+						'OR' => array(
 							'fetched <' => date('Y-m-d H:i:s', time() - $task['timeout']),
 							'fetched' => null
-						]
-					]
-				],
+						)
+					)
+				),
 				'failed <' => ($task['retries'] + 1)
-			];
+			);
 			if (array_key_exists('rate', $task) && $tmp['jobtype'] && array_key_exists($tmp['jobtype'], $this->rateHistory)) {
 				$tmp['NOW() >='] = date('Y-m-d H:i:s', $this->rateHistory[$tmp['jobtype']] + $task['rate']);
 			}
@@ -159,7 +159,7 @@ class QueuedTask extends QueueAppModel {
 		// First, find a list of a few of the oldest unfinished tasks.
 		$data = $this->find('all', $findCond);
 		if (!$data) {
-			return [];
+			return array();
 		}
 
 		// Generate a list of already fetched ID's and a where clause for the update statement
@@ -178,15 +178,15 @@ class QueuedTask extends QueueAppModel {
 		$this->query('UPDATE ' . $this->tablePrefix . $this->table . ' SET workerkey = "' . $key . '", fetched = "' . date('Y-m-d H:i:s') . '" WHERE ' . implode(' OR ', $whereClause) . ' ORDER BY ' . $this->virtualFields['age'] . ' ASC, id ASC LIMIT 1');
 
 		// Read which one actually got updated, which is the job we are supposed to execute.
-		$data = $this->find('first', [
-			'conditions' => [
+		$data = $this->find('first', array(
+			'conditions' => array(
 				'workerkey' => $key,
 				'completed' => null,
-			],
-			'order' => ['fetched' => 'DESC']
-		]);
+			),
+			'order' => array('fetched' => 'DESC')
+		));
 		if (empty($data)) {
-			return [];
+			return array();
 		}
 
 		// If the job had an existing fetched timestamp, increment the failure counter
@@ -194,7 +194,7 @@ class QueuedTask extends QueueAppModel {
 			$data[$this->alias]['failed']++;
 			$data[$this->alias]['failure_message'] = 'Restart after timeout';
 			$this->id = $data[$this->alias]['id'];
-			$this->save($data, false, ['id', 'failed', 'failure_message']);
+			$this->save($data, false, array('id', 'failed', 'failure_message'));
 		}
 		//save last fetch by type for Rate Limiting.
 		$this->rateHistory[$data[$this->alias]['jobtype']] = time();
@@ -223,12 +223,12 @@ class QueuedTask extends QueueAppModel {
  * @return bool Success
  */
 	public function markJobDone($id) {
-		$fields = [
+		$fields = array(
 			$this->alias . '.completed' => "'" . date('Y-m-d H:i:s') . "'"
-		];
-		$conditions = [
+		);
+		$conditions = array(
 			$this->alias . '.id' => $id
-		];
+		);
 		return $this->updateAll($fields, $conditions);
 	}
 
@@ -241,13 +241,13 @@ class QueuedTask extends QueueAppModel {
  */
 	public function markJobFailed($id, $failureMessage = null) {
 		$db = $this->getDataSource();
-		$fields = [
+		$fields = array(
 			$this->alias . '.failed' => $this->alias . '.failed + 1',
 			$this->alias . '.failure_message' => $db->value($failureMessage),
-		];
-		$conditions = [
+		);
+		$conditions = array(
 			$this->alias . '.id' => $id
-		];
+		);
 		return $this->updateAll($fields, $conditions);
 	}
 
@@ -259,11 +259,11 @@ class QueuedTask extends QueueAppModel {
  * @return int Length
  */
 	public function getLength($type = null) {
-		$findCond = [
-			'conditions' => [
+		$findCond = array(
+			'conditions' => array(
 				'completed' => null
-			]
-		];
+			)
+		);
 		if ($type !== null) {
 			$findCond['conditions']['jobtype'] = $type;
 		}
@@ -276,20 +276,14 @@ class QueuedTask extends QueueAppModel {
  * @return array
  */
 	public function getTypes() {
-		/*
-		 * 'jobtype' is intentionally duplicated in the 'fields' array.
-		 * Otherwise Cake auto-adds 'id' to the field list
-		 * which breaks MySql configured with sql_mode=only_full_group_by
-		 */
-		$findCond = [
-			'fields' => [
-				'jobtype',
+		$findCond = array(
+			'fields' => array(
 				'jobtype'
-			],
-			'group' => [
+			),
+			'group' => array(
 				'jobtype'
-			]
-		];
+			)
+		);
 		return $this->find('list', $findCond);
 	}
 
@@ -300,17 +294,17 @@ class QueuedTask extends QueueAppModel {
  * @return array
  */
 	public function getStats() {
-		$findCond = [
-			'fields' => [
+		$findCond = array(
+			'fields' => array(
 				'jobtype,count(id) as num, AVG(UNIX_TIMESTAMP(completed)-UNIX_TIMESTAMP(created)) AS alltime, AVG(UNIX_TIMESTAMP(completed)-UNIX_TIMESTAMP(fetched)) AS runtime, AVG(UNIX_TIMESTAMP(fetched)-IF(notbefore is null,UNIX_TIMESTAMP(created),UNIX_TIMESTAMP(notbefore))) AS fetchdelay'
-			],
-			'conditions' => [
+			),
+			'conditions' => array(
 				'completed NOT' => null
-			],
-			'group' => [
+			),
+			'group' => array(
 				'jobtype'
-			]
-		];
+			)
+		);
 		return $this->find('all', $findCond);
 	}
 
@@ -344,9 +338,9 @@ class QueuedTask extends QueueAppModel {
  * @return void
  */
 	public function cleanOldJobs() {
-		$this->deleteAll([
+		$this->deleteAll(array(
 			'completed < ' => date('Y-m-d H:i:s', time() - Configure::read('Queue.cleanuptimeout'))
-		]);
+		));
 		if (!($pidFilePath = Configure::read('Queue.pidfilepath'))) {
 			return;
 		}
@@ -379,10 +373,10 @@ class QueuedTask extends QueueAppModel {
 		if (file_exists($workerFileLog)) {
 			$worker = file_get_contents($workerFileLog);
 		}
-		return [
+		return array(
 			'worker' => isset($worker) ? $worker : '',
-			'queue' => $this->field('completed', ['completed !=' => null], ['completed' => 'DESC']),
-		];
+			'queue' => $this->field('completed', array('completed !=' => null), array('completed' => 'DESC')),
+		);
 	}
 
 /**
@@ -395,24 +389,24 @@ class QueuedTask extends QueueAppModel {
  * @param array $results Results
  * @return array         Query/Results based on state
  */
-	protected function _findProgress($state, $query = [], $results = []) {
+	protected function _findProgress($state, $query = array(), $results = array()) {
 		if ($state === 'before') {
-			$query['fields'] = [
+			$query['fields'] = array(
 				$this->alias . '.reference',
 				$this->alias . '.status',
 				$this->alias . '.progress',
 				$this->alias . '.failure_message'
-			];
+			);
 			if (isset($query['conditions']['exclude'])) {
 				$exclude = $query['conditions']['exclude'];
 				unset($query['conditions']['exclude']);
 				$exclude = trim($exclude, ',');
 				$exclude = explode(',', $exclude);
-				$query['conditions'][] = [
-					'NOT' => [
+				$query['conditions'][] = array(
+					'NOT' => array(
 						'reference' => $exclude
-					]
-				];
+					)
+				);
 			}
 			if (isset($query['conditions']['group'])) {
 				$query['conditions'][][$this->alias . '.group'] = $query['conditions']['group'];
@@ -422,10 +416,10 @@ class QueuedTask extends QueueAppModel {
 		}
 		// state === after
 		foreach ($results as $k => $result) {
-			$results[$k] = [
+			$results[$k] = array(
 				'reference' => $result[$this->alias]['reference'],
-				'status' => $result[$this->alias]['status']
-			];
+				'status' => $result[0]['status']
+			);
 			if (!empty($result[$this->alias]['progress'])) {
 				$results[$k]['progress'] = $result[$this->alias]['progress'];
 			}
@@ -450,14 +444,14 @@ class QueuedTask extends QueueAppModel {
 				'max_id'
 			],
 			'group' => 'data, jobtype HAVING COUNT(id) > 1',
-			'conditions' => [
+			'conditions' => array(
 				'completed' => null
-			]
+			)
 		]);
 
-		$this->deleteAll([
-			'id' => $duplicateTasks
-		]);
+		$this->deleteAll(array(
+		    'id' => $duplicateTasks
+		));
 
 		unset($this->virtualFields['max_id']);
 	}

@@ -17,9 +17,9 @@ App::uses('AppShell', 'Console/Command');
  */
 class QueueShell extends AppShell {
 
-	public $uses = [
+	public $uses = array(
 		'Queue.QueuedTask'
-	];
+	);
 
 /**
  * @var QueuedTask
@@ -181,7 +181,7 @@ class QueueShell extends AppShell {
 			gc_enable();
 		}
 		if (function_exists('pcntl_signal')) {
-			pcntl_signal(SIGTERM, [&$this, "_exit"]);
+			pcntl_signal(SIGTERM, array(&$this, "_exit"));
 		}
 		$this->_exit = false;
 
@@ -325,8 +325,8 @@ class QueueShell extends AppShell {
  * @return OptionParser
  */
 	public function getOptionParser() {
-		$subcommandParser = [
-			'options' => [
+		$subcommandParser = array(
+			'options' => array(
 				/*
 				'dry-run'=> array(
 					'short' => 'd',
@@ -339,37 +339,37 @@ class QueueShell extends AppShell {
 					'boolean' => true
 				),
 				*/
-			]
-		];
+			)
+		);
 		$subcommandParserFull = $subcommandParser;
-		$subcommandParserFull['options']['group'] = [
+		$subcommandParserFull['options']['group'] = array(
 			'short' => 'g',
 			'help' => 'Group',
 			'default' => ''
-		];
+		);
 
 		return parent::getOptionParser()
-			->description(__d('cake_console', "Simple and minimalistic job queue (or deferred-task) system."))
-			->addSubcommand('clean', [
-				'help' => 'Remove old jobs (cleanup)',
+			->description(__d('cake_console', "..."))
+			->addSubcommand('clean', array(
+				'help' => __d('cake_console', 'Remove old jobs (cleanup)'),
 				'parser' => $subcommandParser
-			])
-			->addSubcommand('add', [
-				'help' => 'Add Job',
+			))
+			->addSubcommand('add', array(
+				'help' => __d('cake_console', 'Add Job'),
 				'parser' => $subcommandParser
-			])
-			->addSubcommand('install', [
-				'help' => 'Install info',
+			))
+			->addSubcommand('install', array(
+				'help' => __d('cake_console', 'Install info'),
 				'parser' => $subcommandParser
-			])
-			->addSubcommand('uninstall', [
-				'help' => 'Uninstall info',
+			))
+			->addSubcommand('uninstall', array(
+				'help' => __d('cake_console', 'Uninstall info'),
 				'parser' => $subcommandParser
-			])
-			->addSubcommand('runworker', [
-				'help' => 'Run Worker',
+			))
+			->addSubcommand('runworker', array(
+				'help' => __d('cake_console', 'Run Worker'),
 				'parser' => $subcommandParserFull
-			]);
+			));
 	}
 
 /**
@@ -415,7 +415,7 @@ class QueueShell extends AppShell {
  */
 	protected function _getTaskConf() {
 		if (!is_array($this->_taskConf)) {
-			$this->_taskConf = [];
+			$this->_taskConf = array();
 			foreach ($this->tasks as $task) {
 				list($pluginName, $taskName) = pluginSplit($task);
 

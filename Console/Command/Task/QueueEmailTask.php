@@ -14,10 +14,10 @@ class QueueEmailTask extends AppShell {
  *
  * @var array
  */
-	public $defaults = [
+	public $defaults = array(
 		'to' => null,
 		'from' => null,
-	];
+	);
 
 	public $timeout = 120;
 
@@ -39,17 +39,17 @@ class QueueEmailTask extends AppShell {
 		$this->err('Queue Email Task cannot be added via Console.');
 		$this->out('Please use createJob() on the QueuedTask Model to create a Proper Email Task.');
 		$this->out('The Data Array should look something like this:');
-		$this->out(var_export([
-			'settings' => [
+		$this->out(var_export(array(
+			'settings' => array(
 				'to' => 'email@example.com',
 				'subject' => 'Email Subject',
 				'from' => 'system@example.com',
 				'template' => 'sometemplate'
-			],
-			'vars' => [
+			),
+			'vars' => array(
 				'content' => 'hello world',
-			]
-		], true));
+			)
+		), true));
 		$this->out('Alternativly, you can pass the whole EmailLib to directly use it.');
 	}
 
@@ -99,7 +99,7 @@ class QueueEmailTask extends AppShell {
 		$this->Email = new EmailLib();
 		$settings = array_merge($this->defaults, $data['settings']);
 		foreach ($settings as $method => $setting) {
-			call_user_func_array([$this->Email, $method], (array)$setting);
+			call_user_func_array(array($this->Email, $method), (array)$setting);
 		}
 		$message = null;
 		if (!empty($data['vars'])) {
@@ -119,13 +119,13 @@ class QueueEmailTask extends AppShell {
  * @return void
  */
 	protected function _log($contents, $log) {
-		$config = [
+		$config = array(
 			'level' => LOG_DEBUG,
 			'scope' => 'email'
-		];
+		);
 		if ($log !== true) {
 			if (!is_array($log)) {
-				$log = ['level' => $log];
+				$log = array('level' => $log);
 			}
 			$config = array_merge($config, $log);
 		}

@@ -12,9 +12,9 @@ class QueueShellTest extends CakeTestCase {
  *
  * @var array
  */
-	public $fixtures = [
+	public $fixtures = array(
 		'plugin.queue.queued_task'
-	];
+	);
 
 	public function setUp() {
 		parent::setUp();
@@ -23,7 +23,7 @@ class QueueShellTest extends CakeTestCase {
 		$this->QueueShell->initialize();
 		$this->QueueShell->loadTasks();
 
-		Configure::write('Queue', [
+		Configure::write('Queue', array(
 			'sleeptime' => 2,
 			'gcprob' => 10,
 			'defaultworkertimeout' => 3,
@@ -33,7 +33,7 @@ class QueueShellTest extends CakeTestCase {
 			'exitwhennothingtodo' => false,
 			'pidfilepath' => TMP . 'queue' . DS,
 			'log' => false,
-		]);
+		));
 	}
 
 /**
@@ -113,7 +113,7 @@ class QueueShellTest extends CakeTestCase {
 
 class TestQueueShell extends QueueShell {
 
-	public $out = [];
+	public $out = array();
 
 	public function out($message = null, $newlines = 1, $level = Shell::NORMAL) {
 		$this->out[] = $message;

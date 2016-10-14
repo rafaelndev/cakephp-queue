@@ -3,7 +3,7 @@ App::uses('QueueAppController', 'Queue.Controller');
 
 class CronTasksController extends QueueAppController {
 
-	public $paginate = [];
+	public $paginate = array();
 
 /**
  * beforeFilter action
@@ -31,9 +31,9 @@ class CronTasksController extends QueueAppController {
  * @return void
  */
 	public function view($id = null) {
-		if (empty($id) || !($cronTask = $this->CronTask->find('first', ['conditions' => ['CronTask.id' => $id]]))) {
+		if (empty($id) || !($cronTask = $this->CronTask->find('first', array('conditions' => array('CronTask.id' => $id))))) {
 			$this->Flash->message(__d('queue', 'invalid record'), 'error');
-			return $this->Common->autoRedirect(['action' => 'index']);
+			return $this->Common->autoRedirect(array('action' => 'index'));
 		}
 		$this->set(compact('cronTask'));
 	}
@@ -49,7 +49,7 @@ class CronTasksController extends QueueAppController {
 			if ($this->CronTask->save($this->request->data)) {
 				$var = $this->request->data['CronTask']['title'];
 				$this->Flash->message(__d('queue', 'record add %s saved', h($var)), 'success');
-				return $this->Common->postRedirect(['action' => 'index']);
+				return $this->Common->postRedirect(array('action' => 'index'));
 			} else {
 				$this->Flash->message(__d('queue', 'formContainsErrors'), 'error');
 			}
@@ -63,15 +63,15 @@ class CronTasksController extends QueueAppController {
  * @return void
  */
 	public function edit($id = null) {
-		if (empty($id) || !($cronTask = $this->CronTask->find('first', ['conditions' => ['CronTask.id' => $id]]))) {
+		if (empty($id) || !($cronTask = $this->CronTask->find('first', array('conditions' => array('CronTask.id' => $id))))) {
 			$this->Flash->message(__d('queue', 'invalid record'), 'error');
-			return $this->Common->autoRedirect(['action' => 'index']);
+			return $this->Common->autoRedirect(array('action' => 'index'));
 		}
 		if ($this->Common->isPosted()) {
 			if ($this->CronTask->save($this->request->data)) {
 				$var = $this->request->data['CronTask']['title'];
 				$this->Flash->message(__d('queue', 'record edit %s saved', h($var)), 'success');
-				return $this->Common->postRedirect(['action' => 'index']);
+				return $this->Common->postRedirect(array('action' => 'index'));
 			} else {
 				$this->Flash->message(__d('queue', 'formContainsErrors'), 'error');
 			}
@@ -90,18 +90,18 @@ class CronTasksController extends QueueAppController {
  */
 	public function delete($id = null) {
 		$this->request->allowMethod('post');
-		if (empty($id) || !($cronTask = $this->CronTask->find('first', ['conditions' => ['CronTask.id' => $id], 'fields' => ['id', 'title']]))) {
+		if (empty($id) || !($cronTask = $this->CronTask->find('first', array('conditions' => array('CronTask.id' => $id), 'fields' => array('id', 'title'))))) {
 			$this->Flash->message(__d('queue', 'invalid record'), 'error');
-			return $this->Common->autoRedirect(['action' => 'index']);
+			return $this->Common->autoRedirect(array('action' => 'index'));
 		}
 		$var = $cronTask['CronTask']['title'];
 
 		if ($this->CronTask->delete($id)) {
 			$this->Flash->message(__d('queue', 'record del %s done', h($var)), 'success');
-			return $this->redirect(['action' => 'index']);
+			return $this->redirect(array('action' => 'index'));
 		}
 		$this->Flash->message(__d('queue', 'record del %s not done exception', h($var)), 'error');
-		return $this->Common->autoRedirect(['action' => 'index']);
+		return $this->Common->autoRedirect(array('action' => 'index'));
 	}
 
 /**
@@ -121,9 +121,9 @@ class CronTasksController extends QueueAppController {
  * @return void
  */
 	public function admin_view($id = null) {
-		if (empty($id) || !($cronTask = $this->CronTask->find('first', ['conditions' => ['CronTask.id' => $id]]))) {
+		if (empty($id) || !($cronTask = $this->CronTask->find('first', array('conditions' => array('CronTask.id' => $id))))) {
 			$this->Flash->message(__d('queue', 'invalid record'), 'error');
-			return $this->Common->autoRedirect(['action' => 'index']);
+			return $this->Common->autoRedirect(array('action' => 'index'));
 		}
 		$this->set(compact('cronTask'));
 	}
@@ -139,7 +139,7 @@ class CronTasksController extends QueueAppController {
 			if ($this->CronTask->save($this->request->data)) {
 				$var = $this->request->data['CronTask']['title'];
 				$this->Flash->message(__d('queue', 'record add %s saved', h($var)), 'success');
-				return $this->Common->postRedirect(['action' => 'index']);
+				return $this->Common->postRedirect(array('action' => 'index'));
 			} else {
 				$this->Flash->message(__d('queue', 'formContainsErrors'), 'error');
 			}
@@ -153,15 +153,15 @@ class CronTasksController extends QueueAppController {
  * @return void
  */
 	public function admin_edit($id = null) {
-		if (empty($id) || !($cronTask = $this->CronTask->find('first', ['conditions' => ['CronTask.id' => $id]]))) {
+		if (empty($id) || !($cronTask = $this->CronTask->find('first', array('conditions' => array('CronTask.id' => $id))))) {
 			$this->Flash->message(__d('queue', 'invalid record'), 'error');
-			return $this->Common->autoRedirect(['action' => 'index']);
+			return $this->Common->autoRedirect(array('action' => 'index'));
 		}
 		if ($this->Common->isPosted()) {
 			if ($this->CronTask->save($this->request->data)) {
 				$var = $this->request->data['CronTask']['title'];
 				$this->Flash->message(__d('queue', 'record edit %s saved', h($var)), 'success');
-				return $this->Common->postRedirect(['action' => 'index']);
+				return $this->Common->postRedirect(array('action' => 'index'));
 			} else {
 				$this->Flash->message(__d('queue', 'formContainsErrors'), 'error');
 			}
@@ -179,18 +179,18 @@ class CronTasksController extends QueueAppController {
  */
 	public function admin_delete($id = null) {
 		$this->request->allowMethod('post');
-		if (empty($id) || !($cronTask = $this->CronTask->find('first', ['conditions' => ['CronTask.id' => $id], 'fields' => ['id', 'title']]))) {
+		if (empty($id) || !($cronTask = $this->CronTask->find('first', array('conditions' => array('CronTask.id' => $id), 'fields' => array('id', 'title'))))) {
 			$this->Flash->message(__d('queue', 'invalid record'), 'error');
-			return $this->Common->autoRedirect(['action' => 'index']);
+			return $this->Common->autoRedirect(array('action' => 'index'));
 		}
 		$var = $cronTask['CronTask']['title'];
 
 		if ($this->CronTask->delete($id)) {
 			$this->Flash->message(__d('queue', 'record del %s done', h($var)), 'success');
-			return $this->redirect(['action' => 'index']);
+			return $this->redirect(array('action' => 'index'));
 		}
 		$this->Flash->message(__d('queue', 'record del %s not done exception', h($var)), 'error');
-		return $this->Common->autoRedirect(['action' => 'index']);
+		return $this->Common->autoRedirect(array('action' => 'index'));
 	}
 
 }
