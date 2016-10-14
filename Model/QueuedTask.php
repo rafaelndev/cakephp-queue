@@ -74,7 +74,7 @@ class QueuedTask extends QueueAppModel {
 	public function createJob($jobName, $data = null, $notBefore = null, $group = null, $reference = null) {
 		$data = [
 			'jobtype' => $jobName,
-			'data' => serialize($data),
+			'data' => json_encode($data),
 			'group' => $group,
 			'reference' => $reference
 		];
@@ -503,5 +503,10 @@ class QueuedTask extends QueueAppModel {
 		parent::__destruct();
 	}
 	*/
+
+  public function outError($message){
+    $this->out($message);
+    $this->failureMessage = "'" . mysql_real_escape_string($message) . "'";
+  }
 
 }

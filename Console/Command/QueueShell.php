@@ -207,16 +207,16 @@ class QueueShell extends AppShell {
 				$this->_exit = true;
 			} else {
 				if ($data) {
-					$this->out('Running Job of type "' . $data['jobtype'] . '"');
+					$this->out('[' . date('Y-m-d H:i:s') . '] Running Job of type "' . $data['jobtype'] . '"');
 					$taskname = 'Queue' . $data['jobtype'];
 
 					if ($this->{$taskname}->autoUnserialize) {
-						$data['data'] = unserialize($data['data']);
+						$data['data'] = json_decode($data['data']);
 					}
 					$return = $this->{$taskname}->run($data['data'], $data['id']);
 					if ($return) {
 						$this->QueuedTask->markJobDone($data['id']);
-						$this->out('Job Finished.');
+						$this->out('[' . date('Y-m-d H:i:s') . '] Job Finished.');
 					} else {
 						$failureMessage = null;
 						if (isset($this->{$taskname}->failureMessage) && !empty($this->{$taskname}->failureMessage)) {
